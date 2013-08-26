@@ -308,7 +308,7 @@ void buttonCallback(func_t callback)
   {
     EIMSK |= (1 << INT6);
     EIFR |= (1 << INTF6);
-    EICRB |= (mode << ISC60);
+    EICRB |= (INT_FALL << ISC60);
     functionPointers[4] = callback;
   }
   else
