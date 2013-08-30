@@ -19,7 +19,7 @@ Defines the motor speed in percent from -100 to 100 trough the H-bridge. It uses
 
 In order for the command to take effect a short delay is required between 2 `setSpeed()` commands, 100ms (`delay(100)`) works quite well. This is typically needed for closed-loop regulation system where fast `setSpeed()` calls won't have the desired effect when called too often.
 
-The H-bridge component is the [DRV8833](http://www.ti.com/product/drv8833) which allows slow and fast decay modes, the library uses the fast decay mode.
+The H-bridge component is the [DRV8833](http://www.ti.com/product/drv8833) which allows slow and fast decay modes, the library uses the slow decay mode by default. To select the fast decay mode one can uncomment the `FASTDECAY` definition in the `prismino.h` file.
 
 The H-bridge can deliver 2A per channel, it is temperature regulated so if it overheats it will automatically stop and wait until the IC temperature gets low enough to restart.
 

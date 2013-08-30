@@ -152,13 +152,15 @@ void setSpeed(int8_t _speedLeft, int8_t _speedRight)
   DDRB |= (1 << 7) | (1 << 6) | (1 << 5);
   DDRD |= (1 << 6);
   
-  // set all values to 1 for slow decay mode (shorts the motor winding)
-  //PORTB |= (1 << 7) | (1 << 6) | (1 << 5);
-  //PORTD |= (1 << 6);
-  
+  #ifdef FASTDECAY
   // set all values to 0 for fast decay mode (return current goes back to source)
   PORTB &= ~((1 << 7) | (1 << 6) | (1 << 5));
   PORTD &= ~(1 << 6);
+  #else
+  // set all values to 1 for slow decay mode (shorts the motor winding)
+  PORTB |= (1 << 7) | (1 << 6) | (1 << 5);
+  PORTD |= (1 << 6);
+  #endif
   
   // enable interrupt vectors
   TIMSK4 = (1 << OCIE4A) | (1 << OCIE4B) | (1 << TOIE4);
@@ -175,11 +177,19 @@ ISR(TIMER4_COMPA_vect)
 {
   if(speedLeft > 0)
   {
+    #ifdef FASTDECAY
     PORTB &= ~(1 << 7);
+    #else
+    PORTD &= ~(1 << 6);
+    #endif
   }
   else if(speedLeft < 0)
   {
+    #ifdef FASTDECAY
     PORTD &= ~(1 << 6);
+    #else
+    PORTB &= ~(1 << 7);
+    #endif
   }
 }
 
@@ -187,11 +197,19 @@ ISR(TIMER4_COMPB_vect)
 {
   if(speedRight > 0)
   {
+    #ifdef FASTDECAY
     PORTB &= ~(1 << 5);
+    #else
+    PORTB &= ~(1 << 6);
+    #endif
   }
   else if(speedRight < 0)
   {
+    #ifdef FASTDECAY
     PORTB &= ~(1 << 6);
+    #else
+    PORTB &= ~(1 << 5);
+    #endif
   }
 }
 
@@ -199,20 +217,36 @@ ISR(TIMER4_OVF_vect)
 {
   if(speedLeft > 0)
   {
+    #ifdef FASTDECAY
     PORTB |= (1 << 7);
+    #else
+    PORTD |= (1 << 6);
+    #endif
   }
   else if(speedLeft < 0)
   {
+    #ifdef FASTDECAY
     PORTD |= (1 << 6);
+    #else
+    PORTB |= (1 << 7);
+    #endif
   }
   
   if(speedRight > 0)
   {
+    #ifdef FASTDECAY
     PORTB |= (1 << 5);
+    #else
+    PORTB |= (1 << 6);
+    #endif
   }
   else if(speedRight < 0)
   {
+    #ifdef FASTDECAY
     PORTB |= (1 << 6);
+    #else
+    PORTB |= (1 << 5);
+    #endif
   }
 }
 

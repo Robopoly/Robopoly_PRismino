@@ -12,6 +12,9 @@
 #ifndef _prismino
 #define _prismino
 
+// uncomment this line to use the fast decay mode with the H-bridge
+//#define FASTDECAY
+
 // servo pins
 #define SERVO1 6 // PORTD7
 #define SERVO2 5 // PORTC6
