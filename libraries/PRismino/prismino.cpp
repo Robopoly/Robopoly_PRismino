@@ -2,7 +2,7 @@
  *
  * Title:       PRismino library v1.0
  * File:        prismino.cpp
- * Date:        2013-08-22
+ * Date:        2013-09-01
  * Author:      Karl Kangur
  *
  ***************************************************************************************/
@@ -68,14 +68,13 @@ void play(uint16_t frequency, uint16_t time)
   // wait here until sound is played
   while(playTime);
   
-  // restore timer0 interrupt vectors, needed for millis()
-  TIMSK0 = temp_timsk0;
-  
   // set pin value to 0
   PORTB &= ~(1 << 4);
   // set buzzer pin to input mode
   DDRB &= ~(1 << 4);
   
+  // restore timer0 interrupt vectors, needed for millis()
+  TIMSK0 = temp_timsk0;
   // reset timer0 for Arduino millis() function
   TCCR0A = temp_tccr0a;
   TCCR0B = temp_tccr0b;
@@ -133,10 +132,12 @@ void setSpeed(int8_t _speedLeft, int8_t _speedRight)
   
   // timer 4 uses a shared temporary register, write to it and then to the 8-bit register to save the 10-bit value
   temp = (long) 1023 * (speedLeft > 0 ? speedLeft : -speedLeft) / 100;
+  
   TC4H = temp >> 8;
   OCR4A = temp & 0xff;
   
   temp = (long) 1023 * (speedRight > 0 ? speedRight : -speedRight) / 100;
+  
   TC4H = temp >> 8;
   OCR4B = temp & 0xff;
   
@@ -152,12 +153,12 @@ void setSpeed(int8_t _speedLeft, int8_t _speedRight)
   DDRB |= (1 << 7) | (1 << 6) | (1 << 5);
   DDRD |= (1 << 6);
   
-  #ifdef FASTDECAY
-  // set all values to 0 for fast decay mode (return current goes back to source)
+  #ifdef SLOWDECAY
+  // set all values to 1 for slow decay mode (shorts the motor winding)
   PORTB &= ~((1 << 7) | (1 << 6) | (1 << 5));
   PORTD &= ~(1 << 6);
   #else
-  // set all values to 1 for slow decay mode (shorts the motor winding)
+  // set all values to 0 for fast decay mode (return current goes back to source)
   PORTB |= (1 << 7) | (1 << 6) | (1 << 5);
   PORTD |= (1 << 6);
   #endif
@@ -177,18 +178,18 @@ ISR(TIMER4_COMPA_vect)
 {
   if(speedLeft > 0)
   {
-    #ifdef FASTDECAY
-    PORTB &= ~(1 << 7);
-    #else
+    #ifdef SLOWDECAY
     PORTD &= ~(1 << 6);
+    #else
+    PORTB |= (1 << 7);
     #endif
   }
   else if(speedLeft < 0)
   {
-    #ifdef FASTDECAY
-    PORTD &= ~(1 << 6);
-    #else
+    #ifdef SLOWDECAY
     PORTB &= ~(1 << 7);
+    #else
+    PORTD |= (1 << 6);
     #endif
   }
 }
@@ -197,18 +198,18 @@ ISR(TIMER4_COMPB_vect)
 {
   if(speedRight > 0)
   {
-    #ifdef FASTDECAY
-    PORTB &= ~(1 << 5);
-    #else
+    #ifdef SLOWDECAY
     PORTB &= ~(1 << 6);
+    #else
+    PORTB |= (1 << 5);
     #endif
   }
   else if(speedRight < 0)
   {
-    #ifdef FASTDECAY
-    PORTB &= ~(1 << 6);
-    #else
+    #ifdef SLOWDECAY
     PORTB &= ~(1 << 5);
+    #else
+    PORTB |= (1 << 6);
     #endif
   }
 }
@@ -217,35 +218,35 @@ ISR(TIMER4_OVF_vect)
 {
   if(speedLeft > 0)
   {
-    #ifdef FASTDECAY
-    PORTB |= (1 << 7);
-    #else
+    #ifdef SLOWDECAY
     PORTD |= (1 << 6);
+    #else
+    PORTB &= ~(1 << 7);
     #endif
   }
   else if(speedLeft < 0)
   {
-    #ifdef FASTDECAY
-    PORTD |= (1 << 6);
-    #else
+    #ifdef SLOWDECAY
     PORTB |= (1 << 7);
+    #else
+    PORTD &= ~(1 << 6);
     #endif
   }
   
   if(speedRight > 0)
   {
-    #ifdef FASTDECAY
-    PORTB |= (1 << 5);
-    #else
+    #ifdef SLOWDECAY
     PORTB |= (1 << 6);
+    #else
+    PORTB &= ~(1 << 5);
     #endif
   }
   else if(speedRight < 0)
   {
-    #ifdef FASTDECAY
-    PORTB |= (1 << 6);
-    #else
+    #ifdef SLOWDECAY
     PORTB |= (1 << 5);
+    #else
+    PORTB &= ~(1 << 6);
     #endif
   }
 }

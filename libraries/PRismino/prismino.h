@@ -2,7 +2,7 @@
  *
  * Title:       PRismino library v1.0
  * File:        prismino.h
- * Date:        2013-08-22
+ * Date:        2013-09-01
  * Author:      Karl Kangur
  *
  ***************************************************************************************/
@@ -12,8 +12,8 @@
 #ifndef _prismino
 #define _prismino
 
-// uncomment this line to use the fast decay mode with the H-bridge
-//#define FASTDECAY
+// uncomment this line to use the slow decay mode with the H-bridge
+//#define SLOWDECAY
 
 // servo pins
 #define SERVO1 6 // PORTD7
