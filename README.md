@@ -31,21 +31,21 @@ The H-bridge can deliver **2A per channel**, it is temperature regulated so if i
 
 ### DIP-switch
 
-`void dipSwitch(uint8_t dipId, func_t callbackFunction = NULL, uint8_t interruptMode = INT_EDGE);`
+`void dipSwitch(uint8_t dipId, func_t callbackFunction = NULL, uint8_t interruptMode = CHANGE);`
     
     // ex: call a function when switch 1 is toggeled
     void myFunction(void)
     {
         // ...
     }
-    dipSwitch(DIP1, myFunction, INT_EDGE);
+    dipSwitch(DIP1, myFunction, CHANGE);
     
     // ex: call a function when switch 2 logic level goes from 1 to 0 (falling edge)
     void myFunction2(void)
     {
         // ...
     }
-    dipSwitch(DIP2, myFunction2, INT_FALL);
+    dipSwitch(DIP2, myFunction2, FALLING);
     
     // to unregister just call the same function without the callback function
     dipSwitch(DIP2, NULL);
@@ -54,10 +54,10 @@ The H-bridge can deliver **2A per channel**, it is temperature regulated so if i
 
 Registers the callback function when a DIP-switch is toggled. It is best to call it in the initial setup part of the code (inside the `setup()` function). Different modes are:
 
-* `INT_LOW`: a low logic level triggers the interrupt, this keeps firing the interrupt vector if the pin value is at logic 0
-* `INT_EDGE`: either transition triggers the interrupt
-* `INT_FALL`: a high to low logic level transition triggers the interrupt
-* `INT_RISE`: a low to high logic level transition triggers the interrupt
+* `LOW`: a low logic level triggers the interrupt, this keeps firing the interrupt vector if the pin value is at logic 0
+* `CHANGE`: either transition triggers the interrupt
+* `FALLING`: a high to low logic level transition triggers the interrupt
+* `RISING`: a low to high logic level transition triggers the interrupt
 
 The callback function cannot have any arguments.
 
@@ -65,12 +65,12 @@ The switches are located on pins 0 to 3, so when they are soldered the **pins ca
 
 The `DIP*` definitions help to find the right switch, they should be used instead of the pin numbers.
 
-| Switch | Definition  | Value | Port |
-| ------ | ----------- | ----- | ---- |
-| 1      | `DIP1`      | 2     | D1   |
-| 2      | `DIP2`      | 3     | D0   |
-| 3      | `DIP3`      | 1     | D3   |
-| 4      | `DIP4`      | 0     | D2   |
+| Switch | Definition  | Value (pin) | Port | Vector      |
+| ------ | ----------- | ----------- | ---- | ----------- |
+| 1      | `DIP1`      | 2           | D1   | `INT1_vect` |
+| 2      | `DIP2`      | 3           | D0   | `INT0_vect` |
+| 3      | `DIP3`      | 1           | D3   | `INT3_vect` |
+| 4      | `DIP4`      | 0           | D2   | `INT2_vect` |
 
 ### Button
 
@@ -189,13 +189,6 @@ Do not use this pin as an output!
 Do not use the potentiometer pin as output when the shield is connected, it can damage the MCU!
 
     #define POT A0 // PORTF7
-
-### Interrupt types
-
-    #define INT_LOW  0
-    #define INT_EDGE 1
-    #define INT_FALL 2
-    #define INT_RISE 3
 
 See the button/switch functions for more details about the interrupt type definitions.
 

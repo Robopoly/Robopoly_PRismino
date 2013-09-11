@@ -41,12 +41,6 @@ void play(uint16_t, uint16_t);
 
 void setSpeed(int8_t, int8_t);
 
-// interrupt types
-#define INT_LOW  0
-#define INT_EDGE 1
-#define INT_FALL 2
-#define INT_RISE 3
-
 // define a function with no arguments pointer type
 typedef void (*func_t)(void);
 
