@@ -44,7 +44,7 @@ void setSpeed(int8_t, int8_t);
 // define a function with no arguments pointer type
 typedef void (*func_t)(void);
 
-void dipSwitch(uint8_t, func_t = NULL, uint8_t = INT_EDGE);
+void dipSwitch(uint8_t, func_t = NULL, uint8_t = CHANGE);
 void buttonCallback(func_t = NULL);
 
 // number of available slots
