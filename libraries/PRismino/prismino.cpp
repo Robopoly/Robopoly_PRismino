@@ -2,7 +2,7 @@
  *
  * Title:       PRismino library v1.0
  * File:        prismino.cpp
- * Date:        2013-09-01
+ * Date:        2013-10-26
  * Author:      Karl Kangur
  *
  ***************************************************************************************/
@@ -258,25 +258,29 @@ static volatile func_t functionPointers[5];
 
 void dipSwitch(uint8_t id, func_t callback, uint8_t mode)
 {
-  uint8_t extIntBit, intVectBit, intModeBit;
+  uint8_t vector, extIntBit, intVectBit, intModeBit;
   switch(id)
   {
-  case 0:
+  case 3:
+  vector = 0;
   extIntBit = INT0;
   intVectBit = INTF0;
   intModeBit = ISC00;
   break;
-  case 1:
+  case 2:
+  vector = 1;
   extIntBit = INT1;
   intVectBit = INTF1;
   intModeBit = ISC10;
   break;
-  case 2:
+  case 0:
+  vector = 2;
   extIntBit = INT2;
   intVectBit = INTF2;
   intModeBit = ISC20;
   break;
-  case 3:
+  case 1:
+  vector = 3;
   extIntBit = INT3;
   intVectBit = INTF3;
   intModeBit = ISC30;
@@ -292,14 +296,14 @@ void dipSwitch(uint8_t id, func_t callback, uint8_t mode)
     // set interrupt call mode (falling, rising, both, low-level)
     EICRA |= (mode << intModeBit);
     // set callback function
-    functionPointers[id] = callback;
+    functionPointers[vector] = callback;
   }
   else
   {
     // disable the interrupt if the function is NULL
     EIMSK &= ~(1 << extIntBit);
     EIFR &= ~(1 << intVectBit);
-    functionPointers[id] = NULL;
+    functionPointers[vector] = NULL;
   }
 }
 

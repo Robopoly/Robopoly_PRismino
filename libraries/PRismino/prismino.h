@@ -2,7 +2,7 @@
  *
  * Title:       PRismino library v1.0
  * File:        prismino.h
- * Date:        2013-09-01
+ * Date:        2013-10-26
  * Author:      Karl Kangur
  *
  ***************************************************************************************/
@@ -23,10 +23,10 @@
 #define BUZZER 8 // PORTB4
 
 // dip switch pins
-#define DIP1 2 // PORTD0
-#define DIP2 3 // PORTD1
-#define DIP3 1 // PORTD3
-#define DIP4 0 // PORTD2
+#define DIP1 0 // PORTD2
+#define DIP2 1 // PORTD3
+#define DIP3 2 // PORTD1
+#define DIP4 3 // PORTD0
 
 // button pin
 #define BUTTON 7 // PORTE6

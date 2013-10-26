@@ -67,10 +67,10 @@ The `DIP*` definitions help to find the right switch, they should be used instea
 
 | Switch | Definition  | Value (pin) | Port | Vector      |
 | ------ | ----------- | ----------- | ---- | ----------- |
-| 1      | `DIP1`      | 2           | D1   | `INT1_vect` |
-| 2      | `DIP2`      | 3           | D0   | `INT0_vect` |
-| 3      | `DIP3`      | 1           | D3   | `INT3_vect` |
-| 4      | `DIP4`      | 0           | D2   | `INT2_vect` |
+| 1      | `DIP1`      | 0           | D2   | `INT2_vect` |
+| 2      | `DIP2`      | 1           | D3   | `INT3_vect` |
+| 3      | `DIP3`      | 2           | D1   | `INT1_vect` |
+| 4      | `DIP4`      | 3           | D0   | `INT0_vect` |
 
 ### Button
 
