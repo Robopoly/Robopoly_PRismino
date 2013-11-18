@@ -1,9 +1,10 @@
 /***************************************************************************************
  *
- * Title:       PRismino library v1.0
+ * Title:       PRismino library v1.1
  * File:        prismino.h
- * Date:        2013-10-26
+ * Date:        2013-11-16
  * Author:      Karl Kangur
+ * Website:     https://github.com/Robopoly/prismino-library
  *
  ***************************************************************************************/
 #include <Arduino.h>
@@ -37,20 +38,18 @@
 // potentiometer pin
 #define POT A0 // PORTF7
 
-void play(uint16_t, uint16_t);
+// macro for shortcut and backwards compatibility
+#define play(frequency, duration) tone(BUZZER, frequency, duration)
 
 void setSpeed(int8_t, int8_t);
 
-// define a function with no arguments pointer type
-typedef void (*func_t)(void);
-
-void dipSwitch(uint8_t, func_t = NULL, uint8_t = CHANGE);
-void buttonCallback(func_t = NULL);
+void dipSwitch(uint8_t, void (*callback)(void) = NULL, uint8_t = CHANGE);
+void buttonCallback(void (*callback)(void) = NULL);
 
 // number of available slots
 #define TIMEDFUNCTIONS 4
 
-int8_t setTimer(func_t, uint16_t, uint8_t = 0);
+int8_t setTimer(void (*callback)(void), uint16_t, uint8_t = 0);
 void unsetTimer(uint8_t);
 
 #endif
