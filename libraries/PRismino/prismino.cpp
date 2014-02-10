@@ -2,7 +2,7 @@
  *
  * Title:       PRismino library v1.1
  * File:        prismino.cpp
- * Date:        2013-11-16
+ * Date:        2014-02-08
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
@@ -187,10 +187,15 @@ void buttonCallback(void (*callback)(void))
 {
   if(callback != NULL)
   {
+    // enable internal pull-up
+    pinMode(BUTTON, INPUT);
+    digitalWrite(BUTTON, HIGH);
     attachInterrupt(4, callback, FALLING);
   }
   else
   {
+    // disable internal pull-up
+    digitalWrite(BUTTON, LOW);
     detachInterrupt(4);
   }  
 }
@@ -232,7 +237,7 @@ int8_t setTimer(void (*callback)(void), uint16_t interval, uint8_t callNumber)
     asm("sei");
     
     // reset all interrupts
-    while(i++ < TIMEDFUNCTIONS)
+    for(i = 0; i++ < TIMEDFUNCTIONS; i++)
     {
       timedFunctionArray[i].interval = 0;
     }
@@ -242,8 +247,7 @@ int8_t setTimer(void (*callback)(void), uint16_t interval, uint8_t callNumber)
   }
   
   // register the timed function
-  i = 0;
-  while(i++ < TIMEDFUNCTIONS)
+  for(i = 0; i++ < TIMEDFUNCTIONS; i++)
   {
     // find a free slot
     if(!timedFunctionArray[i].interval)

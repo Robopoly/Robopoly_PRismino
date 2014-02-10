@@ -2,7 +2,7 @@
  *
  * Title:       PRismino library v1.1
  * File:        prismino.h
- * Date:        2013-11-16
+ * Date:        2014-02-08
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
@@ -10,33 +10,33 @@
 #include <Arduino.h>
 
 // prevent errors due to multiple includes
-#ifndef _prismino
-#define _prismino
+#ifndef _prismino_h
+#define _prismino_h
 
 // uncomment this line to use the slow decay mode with the H-bridge
 //#define SLOWDECAY
 
-// servo pins
-#define SERVO1 6 // PORTD7
-#define SERVO2 5 // PORTC6
+// servomotor pins
+#define S1 6 // PD7
+#define S2 5 // PC6
 
 // buzzer pin
-#define BUZZER 8 // PORTB4
+#define BUZZER 8 // PB4
 
 // dip switch pins
-#define DIP1 0 // PORTD2
-#define DIP2 1 // PORTD3
-#define DIP3 2 // PORTD1
-#define DIP4 3 // PORTD0
+#define DIP1 0 // PD2
+#define DIP2 1 // PD3
+#define DIP3 2 // PD1
+#define DIP4 3 // PD0
 
 // button pin
-#define BUTTON 7 // PORTE6
+#define BUTTON 7 // PE6
 
 // LED pin
-#define LED 13 // PORTC7
+#define LED 13 // PC7
 
 // potentiometer pin
-#define POT A0 // PORTF7
+#define POT A0 // PF7
 
 // macro for shortcut and backwards compatibility
 #define play(frequency, duration) tone(BUZZER, frequency, duration)
