@@ -94,6 +94,8 @@ The `DIP*` definitions help to find the right switch, they should be used instea
 
 Registers a callback function for when the shield button is clicked, it is connected to the pin 7 on the shield. It defaults to a falling edge interrupt as the pin is pulled high by the micro-controller internal pull-up resistor when the button is released.
 
+Calling this function sets the pin mode as input and the value to logical 1 to activate the internal pull-up resistor (between 20 and 50K) needed to define the logical state when the button is not pressed. Pressing the button shorts the line to ground via a 10K external short-circuit protection resistor in case one configures the pin as output and presses the button. This effectively makes a voltage divider and the actual voltage when pressed is about 1V, the micro-controller data sheet stipulates that a low input level is detected at 0.3*Vcc which is 1.5V at 5V.
+
 **Note**: mind the [contact bounce](http://en.wikipedia.org/wiki/Switch#Contact_bounce) which can be annoying, but [preventable](http://arduino.cc/en/Tutorial/Debounce).
 
 ## Timed functions
@@ -160,39 +162,41 @@ These shortcuts, that are included in the library, can be used to make the code 
 
 The numbers correspond to the markings on the PCB silkscreen.
 
-    #define SERVO1 6 // PORTD7
-    #define SERVO2 5 // PORTC6
+    #define SERVO1 6 // PD7
+    #define SERVO2 5 // PC6
 
 ### DIP switch pins
 
 Do not use these pins as outputs! The reason for this convoluted order is because they were easier to route on the PCB this way.
 
-    #define DIP1 2 // PORTD0
-    #define DIP2 3 // PORTD1
-    #define DIP3 1 // PORTD3
-    #define DIP4 0 // PORTD2
+    #define DIP1 2 // PD0
+    #define DIP2 3 // PD1
+    #define DIP3 1 // PD3
+    #define DIP4 0 // PD2
 
 ### Button pin
 
-Do not use this pin as an output!
+This pin is protected with a 10K resistor against shortcuts when it's set as output and the button is clicked (shorted to ground).
 
-    #define BUTTON 7 // PORTE6
+    #define BUTTON 7 // PE6
 
 ### Buzzer pin
 
-    #define BUZZER 8 // PORTB4
+There's a 1K resistor in line with the buzzer to limit the current.
+
+    #define BUZZER 8 // PB4
 
 ### LED pin
 
-    #define LED 13 // PORTC7
+There's a 1K resistor in line to limit the LED current, when LEDs on the shield and PRismino are installed the equivalent resistance is 0.5K.
+
+    #define LED 13 // PC7
 
 ### Potentiometer pin
 
-Do not use the potentiometer pin as output when the shield is connected, it can damage the MCU!
+The potentiometer has a 10K resistor in line with the pin, this serves as a short-circuit protection in case this pin is used as output and the potentiometer is set to the opposite voltage.
 
-    #define POT A0 // PORTF7
-
-See the button/switch functions for more details about the interrupt type definitions.
+    #define POT A0 // PF7
 
 # Examples
 
