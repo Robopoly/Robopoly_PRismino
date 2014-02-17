@@ -42,9 +42,6 @@ void setup()
   dipSwitch(DIP3, test3, RISING);
   dipSwitch(DIP4, test4, CHANGE);
   
-  // remove the interrupt callback on switch 4
-  dipSwitch(DIP4, NULL);
-  
   Serial.begin(9600);
 }
 

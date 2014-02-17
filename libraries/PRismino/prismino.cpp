@@ -2,7 +2,7 @@
  *
  * Title:       PRismino library v1.1
  * File:        prismino.cpp
- * Date:        2014-02-08
+ * Date:        2014-02-17
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
@@ -165,20 +165,6 @@ ISR(TIMER4_OVF_vect)
     #else
     PORTB &= ~(1 << 6);
     #endif
-  }
-}
-
-// ### DIP SWITCH FUNCTIONS
-
-void dipSwitch(uint8_t id, void (*callback)(void), uint8_t mode)
-{
-  if(callback != NULL)
-  {
-    attachInterrupt(id, callback, mode);
-  }
-  else
-  {
-    detachInterrupt(id);
   }
 }
 

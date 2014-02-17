@@ -71,12 +71,12 @@ The switches are located on pins 0 to 3, so when they are soldered the **pins ca
 
 The `DIP*` definitions help to find the right switch, they should be used instead of the pin numbers.
 
-| Switch | Definition  | Value (pin) | Port | Vector      |
-| ------ | ----------- | ----------- | ---- | ----------- |
-| 1      | `DIP1`      | 0           | PD2  | `INT2_vect` |
-| 2      | `DIP2`      | 1           | PD3  | `INT3_vect` |
-| 3      | `DIP3`      | 2           | PD1  | `INT1_vect` |
-| 4      | `DIP4`      | 3           | PD0  | `INT0_vect` |
+| Switch | Definition  | Value (pin) |
+| ------ | ----------- | ----------- |
+| 1      | `DIP1`      | 0           |
+| 2      | `DIP2`      | 1           |
+| 3      | `DIP3`      | 3           |
+| 4      | `DIP4`      | 2           |
 
 ### Button
 
@@ -169,10 +169,10 @@ The numbers correspond to the markings on the PCB silkscreen.
 
 Do not use these pins as outputs! The reason for this convoluted order is because they were easier to route on the PCB this way.
 
-    #define DIP1 2 // PD0
-    #define DIP2 3 // PD1
-    #define DIP3 1 // PD3
-    #define DIP4 0 // PD2
+    #define DIP1 0 // PD2
+    #define DIP2 1 // PD3
+    #define DIP3 3 // PD1
+    #define DIP4 2 // PD0
 
 ### Button pin
 
@@ -201,6 +201,21 @@ The potentiometer has a 10K resistor in line with the pin, this serves as a shor
 # Examples
 
 A few example programs are also provided to show how to use these functions and all the components on the Robopoly Shield. See them under _File -> Examples -> PRismino_ in Arduino IDE.
+
+# Version log
+
+## 1.1 (2014-02-17)
+
+* Corrected DIP-switch interrupt vector redefinition problem by making a macro to `attachInterrupt()`.
+* Enabled internal pull-up when calling `buttonCallback()`.
+* Permuted values of `DIP3` and `DIP4` as they were wrong.
+* Updated the DIP-switch example sketch.
+* Added new example sketch for buzzer: MarioSounds.
+* Updated syntax colouring file.
+
+## 1.0 (2013-10-26)
+
+* Initial version.
 
 # Licence
 

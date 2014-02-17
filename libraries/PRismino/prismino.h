@@ -2,7 +2,7 @@
  *
  * Title:       PRismino library v1.1
  * File:        prismino.h
- * Date:        2014-02-08
+ * Date:        2014-02-17
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
@@ -26,8 +26,10 @@
 // dip switch pins
 #define DIP1 0 // PD2
 #define DIP2 1 // PD3
-#define DIP3 2 // PD1
-#define DIP4 3 // PD0
+#define DIP3 3 // PD1
+#define DIP4 2 // PD0
+
+#define dipSwitch(pin, func, mode) attachInterrupt(pin, func, mode);
 
 // button pin
 #define BUTTON 7 // PE6
@@ -43,7 +45,6 @@
 
 void setSpeed(int8_t, int8_t);
 
-void dipSwitch(uint8_t, void (*callback)(void) = NULL, uint8_t = CHANGE);
 void buttonCallback(void (*callback)(void) = NULL);
 
 // number of available slots
