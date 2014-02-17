@@ -37,7 +37,7 @@ The H-bridge can deliver **2A per channel**, it is temperature regulated so if i
 
 ### DIP-switch
 
-`void dipSwitch(uint8_t dipId, func_t callbackFunction = NULL, uint8_t interruptMode = CHANGE);`
+`void dipSwitch(uint8_t dip, void (*userFunc)(void), int mode);`
     
     // call a function when switch 1 is toggled
     void myFunction(void)
@@ -53,7 +53,7 @@ The H-bridge can deliver **2A per channel**, it is temperature regulated so if i
     }
     dipSwitch(DIP2, myFunction2, FALLING);
 
-Registers the callback function when a DIP-switch is toggled. It is best to call it in the initial setup part of the code (inside the `setup()` function). Different modes are:
+Registers the callback function when a DIP-switch is toggled, it's actually a macro to [`attachInterrupt()`](http://arduino.cc/en/Reference/attachInterrupt) Arduino function. It is best to call it in the initial setup part of the code (inside the `setup()` function). Different modes are:
 
 * `LOW`: a low logic level triggers the interrupt, this keeps firing the interrupt vector if the pin value is at logic 0
 * `CHANGE`: either transition triggers the interrupt
