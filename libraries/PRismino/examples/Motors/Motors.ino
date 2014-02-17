@@ -18,6 +18,7 @@ void loop()
 {
   // set both motors (left and right) at 20% forwards
   setSpeed(20, 20);
+  // wait at least 100ms or the setting won't have any effect before the next setting
   delay(500);
   setSpeed(-20, -20);
   delay(500);

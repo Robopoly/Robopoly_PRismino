@@ -1,56 +1,56 @@
 /***************************************************************************************
  *
- * Title:       PRismino library v1.0
+ * Title:       PRismino library v1.1
  * File:        prismino.h
- * Date:        2013-10-26
+ * Date:        2014-02-17
  * Author:      Karl Kangur
+ * Website:     https://github.com/Robopoly/prismino-library
  *
  ***************************************************************************************/
 #include <Arduino.h>
 
 // prevent errors due to multiple includes
-#ifndef _prismino
-#define _prismino
+#ifndef _prismino_h
+#define _prismino_h
 
 // uncomment this line to use the slow decay mode with the H-bridge
 //#define SLOWDECAY
 
-// servo pins
-#define SERVO1 6 // PORTD7
-#define SERVO2 5 // PORTC6
+// servomotor pins
+#define S1 6 // PD7
+#define S2 5 // PC6
 
 // buzzer pin
-#define BUZZER 8 // PORTB4
+#define BUZZER 8 // PB4
 
 // dip switch pins
-#define DIP1 0 // PORTD2
-#define DIP2 1 // PORTD3
-#define DIP3 2 // PORTD1
-#define DIP4 3 // PORTD0
+#define DIP1 0 // PD2
+#define DIP2 1 // PD3
+#define DIP3 3 // PD1
+#define DIP4 2 // PD0
+
+#define dipSwitch(pin, func, mode) attachInterrupt(pin, func, mode);
 
 // button pin
-#define BUTTON 7 // PORTE6
+#define BUTTON 7 // PE6
 
 // LED pin
-#define LED 13 // PORTC7
+#define LED 13 // PC7
 
 // potentiometer pin
-#define POT A0 // PORTF7
+#define POT A0 // PF7
 
-void play(uint16_t, uint16_t);
+// macro for shortcut and backwards compatibility
+#define play(frequency, duration) tone(BUZZER, frequency, duration)
 
 void setSpeed(int8_t, int8_t);
 
-// define a function with no arguments pointer type
-typedef void (*func_t)(void);
-
-void dipSwitch(uint8_t, func_t = NULL, uint8_t = CHANGE);
-void buttonCallback(func_t = NULL);
+void buttonCallback(void (*callback)(void) = NULL);
 
 // number of available slots
 #define TIMEDFUNCTIONS 4
 
-int8_t setTimer(func_t, uint16_t, uint8_t = 0);
+int8_t setTimer(void (*callback)(void), uint16_t, uint8_t = 0);
 void unsetTimer(uint8_t);
 
 #endif

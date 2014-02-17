@@ -4,7 +4,13 @@ This document explains the usage of the library to be used with the [PRismino](h
 
 **Warning**: some pins are hard-wired to elements that source current, this means that if the pins are set as outputs short-circuits can occur and **damage the micro-controller**, please read everything carefully to avoid it or you might break your PRismino.
 
-Installing the library is like with any [Arduino library](http://arduino.cc/en/Guide/Libraries), just copy `/library` directory to your sketchbook directory.
+## Installing
+
+Installing the library is like with any [Arduino library](http://arduino.cc/en/Guide/Libraries), just copy `/libraries` and `/hardware` directories to your sketchbook directory:
+
+* Windows: `My Documents\Arduino\`
+* Mac: `~/Documents/Arduino/`
+* Linux: `~/Documents/Arduino/`
 
 ## Motor functions
 
@@ -12,7 +18,7 @@ Installing the library is like with any [Arduino library](http://arduino.cc/en/G
 
 `void setSpeed(int8_t leftSpeed, int8_t rightSpeed);`
 
-    // ex: to turn set the left wheel forward 40% and right wheel backwards 40%
+    // set the left wheel forward 40% and right wheel backwards 40%
     setSpeed(40, -40);
 
 Defines the motor speed in percent from -100 to 100 trough the H-bridge. It uses the pins 9, 10, 11 and 12 of the PRismino. The speed is defined by a PWM signal with a period of 15'625Hz. This function uses the 10-bit `Timer/Counter 4` of the ATmega32U4. In order to change direction interrupt vectors select which pin must be toggled.
@@ -21,7 +27,7 @@ In order for the command to take effect a short delay is required between 2 `set
 
 The H-bridge component is the [DRV8833](http://www.ti.com/product/drv8833) which allows slow and fast decay modes, the library uses the fast decay mode by default. To select the slow decay mode one can define `SLOWDECAY` before including `prismino.h` file, or uncomment it in the `prismino.h` file.
 
-    // ex: how to use the slow decay mode
+    // use the slow decay mode instead of fast decay
     #define SLOWDECAY
     #include <prismino.h>
 
@@ -33,14 +39,14 @@ The H-bridge can deliver **2A per channel**, it is temperature regulated so if i
 
 `void dipSwitch(uint8_t dipId, func_t callbackFunction = NULL, uint8_t interruptMode = CHANGE);`
     
-    // ex: call a function when switch 1 is toggeled
+    // call a function when switch 1 is toggled
     void myFunction(void)
     {
         // ...
     }
     dipSwitch(DIP1, myFunction, CHANGE);
     
-    // ex: call a function when switch 2 logic level goes from 1 to 0 (falling edge)
+    // call a function when switch 2 logic level goes from 1 to 0 (falling edge)
     void myFunction2(void)
     {
         // ...
@@ -65,18 +71,18 @@ The switches are located on pins 0 to 3, so when they are soldered the **pins ca
 
 The `DIP*` definitions help to find the right switch, they should be used instead of the pin numbers.
 
-| Switch | Definition  | Value (pin) | Port | Vector      |
-| ------ | ----------- | ----------- | ---- | ----------- |
-| 1      | `DIP1`      | 0           | D2   | `INT2_vect` |
-| 2      | `DIP2`      | 1           | D3   | `INT3_vect` |
-| 3      | `DIP3`      | 2           | D1   | `INT1_vect` |
-| 4      | `DIP4`      | 3           | D0   | `INT0_vect` |
+| Switch | Definition  | Value (pin) |
+| ------ | ----------- | ----------- |
+| 1      | `DIP1`      | 0           |
+| 2      | `DIP2`      | 1           |
+| 3      | `DIP3`      | 3           |
+| 4      | `DIP4`      | 2           |
 
 ### Button
 
 `void buttonCallback(func_t callbackFunction = NULL);`
 
-    // ex: call a function when the shield button is pressed
+    // call a function when the shield button is pressed
     void buttonClick(void)
     {
         // ...
@@ -86,9 +92,9 @@ The `DIP*` definitions help to find the right switch, they should be used instea
     // to unregister just call the same function without the callback function
     buttonCallback(NULL);
 
-Registers a callback function for when the shield button is clicked. It defaults to a falling edge interrupt as the pin is pulled high when the button is released.
+Registers a callback function for when the shield button is clicked, it is connected to the pin 7 on the shield. It defaults to a falling edge interrupt as the pin is pulled high by the micro-controller internal pull-up resistor when the button is released.
 
-The button is soldered on the pin 7, so it **cannot be used as an output** or there is a risk of short-circuit and the destruction of the micro-controller.
+Calling this function sets the pin mode as input and the value to logical 1 to activate the internal pull-up resistor (between 20 and 50K) needed to define the logical state when the button is not pressed. Pressing the button shorts the line to ground via a 10K external short-circuit protection resistor in case one configures the pin as output and presses the button. This effectively makes a voltage divider and the actual voltage when pressed is about 1V, the micro-controller data sheet stipulates that a low input level is detected at 0.3*Vcc which is 1.5V at 5V.
 
 **Note**: mind the [contact bounce](http://en.wikipedia.org/wiki/Switch#Contact_bounce) which can be annoying, but [preventable](http://arduino.cc/en/Tutorial/Debounce).
 
@@ -100,14 +106,14 @@ The time interval is a multiple of 100ms.
 
 `int8_t setTimer(func_t callbackFunction, uint16_t interval, uint8_t callNumber = 0);`
     
-    // ex: call a function every 5*100ms = 500ms, 10 times
+    // call a function every 5*100ms = 500ms, 10 times
     void myFunction(void)
     {
         // ... this code must be executed in under 100ms
     }
     setTimer(myFunction, 5, 10);
     
-    // ex: call a function every 600*100ms = 60 seconds = 1 minute, indefinitely
+    // call a function every 600*100ms = 60 seconds = 1 minute, indefinitely
     void myFunction2(void)
     {
         // ...
@@ -122,7 +128,7 @@ The function can be called at most 256 times if the `callNumber` parameter is pr
 
 To unset a timed function use `void unsetTimer(uint8_t);`, `setTimer()` returns an identification number that can be used to unset it later.
 
-    // ex: set and then unset a timed function
+    // set and then unset a timed function
     void myFunction3(void)
     {
         // ...
@@ -141,14 +147,12 @@ If the timed function slots are full `setTimer()` will return a `-1`, the maximu
 
 `void play(uint16_t frequency, uint16_t time);`
 
-    // ex: to play a 440Hz sound during 1 second
+    // play a 440Hz sound during 1 second
     play(440, 1000);
 
 Sends a square wave to the [Robopoly shield's](https://github.com/Robopoly/Robopoly-Shield) buzzer (pin 8) to output a sound. The parameters are the frequency in Hz and the play-time in milliseconds.
 
-It shares the `Timer/Counter 0` with the Arduino `millis()` function, once called it disables all `millis()` interrupts, configures itself to PWM, Phase Correct, TOP defined by OCR0A mode and calculates the necessary interrupt delay to output the requested frequency. Once finished it resets the `Timer/Counter 0` to the Arduino `millis()` function functionality.
-
-You can think of it as a `delay()` function that makes a sound.
+It's actually a macro to the Arduino [`tone()`](http://arduino.cc/en/Reference/tone) function, it defines the buzzer pin so only 2 arguments are needed.
 
 ## Definitions
 
@@ -158,43 +162,60 @@ These shortcuts, that are included in the library, can be used to make the code 
 
 The numbers correspond to the markings on the PCB silkscreen.
 
-    #define SERVO1 6 // PORTD7
-    #define SERVO2 5 // PORTC6
+    #define SERVO1 6 // PD7
+    #define SERVO2 5 // PC6
 
 ### DIP switch pins
 
 Do not use these pins as outputs! The reason for this convoluted order is because they were easier to route on the PCB this way.
 
-    #define DIP1 2 // PORTD0
-    #define DIP2 3 // PORTD1
-    #define DIP3 1 // PORTD3
-    #define DIP4 0 // PORTD2
+    #define DIP1 0 // PD2
+    #define DIP2 1 // PD3
+    #define DIP3 3 // PD1
+    #define DIP4 2 // PD0
 
 ### Button pin
 
-Do not use this pin as an output!
+This pin is protected with a 10K resistor against shortcuts when it's set as output and the button is clicked (shorted to ground).
 
-    #define BUTTON 7 // PORTE6
+    #define BUTTON 7 // PE6
 
 ### Buzzer pin
 
-    #define BUZZER 8 // PORTB4
+There's a 1K resistor in line with the buzzer to limit the current.
+
+    #define BUZZER 8 // PB4
 
 ### LED pin
 
-    #define LED 13 // PORTC7
+There's a 1K resistor in line to limit the LED current, when LEDs on the shield and PRismino are installed the equivalent resistance is 0.5K.
+
+    #define LED 13 // PC7
 
 ### Potentiometer pin
 
-Do not use the potentiometer pin as output when the shield is connected, it can damage the MCU!
+The potentiometer has a 10K resistor in line with the pin, this serves as a short-circuit protection in case this pin is used as output and the potentiometer is set to the opposite voltage.
 
-    #define POT A0 // PORTF7
-
-See the button/switch functions for more details about the interrupt type definitions.
+    #define POT A0 // PF7
 
 # Examples
 
 A few example programs are also provided to show how to use these functions and all the components on the Robopoly Shield. See them under _File -> Examples -> PRismino_ in Arduino IDE.
+
+# Version log
+
+## 1.1 (2014-02-17)
+
+* Corrected DIP-switch interrupt vector redefinition problem by making a macro to `attachInterrupt()`.
+* Enabled internal pull-up when calling `buttonCallback()`.
+* Permuted values of `DIP3` and `DIP4` as they were wrong.
+* Updated the DIP-switch example sketch.
+* Added new example sketch for buzzer: MarioSounds.
+* Updated syntax colouring file.
+
+## 1.0 (2013-10-26)
+
+* Initial version.
 
 # Licence
 
