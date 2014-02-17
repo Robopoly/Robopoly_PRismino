@@ -52,11 +52,6 @@ The H-bridge can deliver **2A per channel**, it is temperature regulated so if i
         // ...
     }
     dipSwitch(DIP2, myFunction2, FALLING);
-    
-    // to unregister just call the same function without the callback function
-    dipSwitch(DIP2, NULL);
-    // or simply
-    dipSwitch(DIP2);
 
 Registers the callback function when a DIP-switch is toggled. It is best to call it in the initial setup part of the code (inside the `setup()` function). Different modes are:
 
