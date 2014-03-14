@@ -157,8 +157,8 @@ These shortcuts, that are included in the library, can be used to make the code 
 
 The numbers correspond to the markings on the PCB silkscreen.
 
-    #define SERVO1 6 // PD7
-    #define SERVO2 5 // PC6
+    #define S1 6 // PD7
+    #define S2 5 // PC6
 
 ### DIP switch pins
 

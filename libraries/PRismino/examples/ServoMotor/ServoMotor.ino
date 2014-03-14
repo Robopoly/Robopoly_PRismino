@@ -15,8 +15,8 @@ Servo servo2;
 void setup()
 {
   // attach the servo motor pins to the instances
-  servo1.attach(SERVO1); // pin 6
-  servo2.attach(SERVO2); // pin 5
+  servo1.attach(S1); // pin 6
+  servo2.attach(S2); // pin 5
 }
 
 void loop()
