@@ -1,8 +1,8 @@
 /***************************************************************************************
  *
- * Title:       PRismino library v1.1
+ * Title:       PRismino library v1.2
  * File:        prismino.cpp
- * Date:        2014-02-17
+ * Date:        2014-03-14
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
@@ -174,14 +174,14 @@ void buttonCallback(void (*callback)(void))
   if(callback != NULL)
   {
     // enable internal pull-up
-    pinMode(BUTTON, INPUT);
-    digitalWrite(BUTTON, HIGH);
+    pinMode(BTN, INPUT);
+    digitalWrite(BTN, HIGH);
     attachInterrupt(4, callback, FALLING);
   }
   else
   {
     // disable internal pull-up
-    digitalWrite(BUTTON, LOW);
+    digitalWrite(BTN, LOW);
     detachInterrupt(4);
   }  
 }

@@ -173,13 +173,13 @@ Do not use these pins as outputs! The reason for this convoluted order is becaus
 
 This pin is protected with a 10K resistor against shortcuts when it's set as output and the button is clicked (shorted to ground).
 
-    #define BUTTON 7 // PE6
+    #define BTN 7 // PE6
 
 ### Buzzer pin
 
 There's a 1K resistor in line with the buzzer to limit the current.
 
-    #define BUZZER 8 // PB4
+    #define BZR 8 // PB4
 
 ### LED pin
 
@@ -198,6 +198,13 @@ The potentiometer has a 10K resistor in line with the pin, this serves as a shor
 A few example programs are also provided to show how to use these functions and all the components on the Robopoly Shield. See them under _File -> Examples -> PRismino_ in Arduino IDE.
 
 # Version log
+
+## 1.2 (2014-03-14)
+
+* Changed servo motor pin constants from `SERVO1` and `SERVO2` to `S1` and `S2`.
+* Updated servo motor example sketch.
+* Changed buzzer pin constant from `BUZZER` to `BZR`.
+* Changed button pin constant from `BUTTON` to `BTN`.
 
 ## 1.1 (2014-02-17)
 

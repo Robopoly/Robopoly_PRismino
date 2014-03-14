@@ -1,8 +1,8 @@
 /***************************************************************************************
  *
- * Title:       PRismino library v1.1
+ * Title:       PRismino library v1.2
  * File:        prismino.h
- * Date:        2014-02-17
+ * Date:        2014-03-14
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
@@ -21,7 +21,7 @@
 #define S2 5 // PC6
 
 // buzzer pin
-#define BUZZER 8 // PB4
+#define BZR 8 // PB4
 
 // dip switch pins
 #define DIP1 0 // PD2
@@ -32,7 +32,7 @@
 #define dipSwitch(pin, func, mode) attachInterrupt(pin, func, mode);
 
 // button pin
-#define BUTTON 7 // PE6
+#define BTN 7 // PE6
 
 // LED pin
 #define LED 13 // PC7
@@ -41,7 +41,7 @@
 #define POT A0 // PF7
 
 // macro for shortcut and backwards compatibility
-#define play(frequency, duration) tone(BUZZER, frequency, duration)
+#define play(frequency, duration) tone(BZR, frequency, duration)
 
 void setSpeed(int8_t, int8_t);
 
