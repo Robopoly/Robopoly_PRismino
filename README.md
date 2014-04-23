@@ -199,7 +199,7 @@ A few example programs are also provided to show how to use these functions and 
 
 # Version log
 
-## 1.3 (2013-04-23)
+## 1.3 (2014-04-23)
 
 * Added old pin constants back for backwards compatibility.
 
