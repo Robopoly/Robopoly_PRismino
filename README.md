@@ -199,6 +199,10 @@ A few example programs are also provided to show how to use these functions and 
 
 # Version log
 
+## 1.3 (2013-04-23)
+
+* Added old pin constants back for backwards compatibility.
+
 ## 1.2 (2014-03-14)
 
 * Changed servo motor pin constants from `SERVO1` and `SERVO2` to `S1` and `S2`.
