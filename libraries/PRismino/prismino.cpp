@@ -1,8 +1,8 @@
 /***************************************************************************************
  *
- * Title:       PRismino library v1.2
+ * Title:       PRismino library v1.3
  * File:        prismino.cpp
- * Date:        2014-03-14
+ * Date:        2014-04-23
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
