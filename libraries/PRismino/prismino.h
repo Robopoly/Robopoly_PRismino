@@ -22,6 +22,7 @@
 
 // buzzer pin
 #define BZR 8 // PB4
+#define BUZZER 8 // PB4, for backwards compatibility
 
 // dip switch pins
 #define DIP1 0 // PD2
@@ -33,6 +34,7 @@
 
 // button pin
 #define BTN 7 // PE6
+#define BUTTON 7 // PE6, for backwards compatibility
 
 // LED pin
 #define LED 13 // PC7
