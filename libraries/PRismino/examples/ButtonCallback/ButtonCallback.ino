@@ -7,19 +7,19 @@
 #include <prismino.h>
 
 // called when the button is clicked
-void buttonCallback()
+void button()
 {
-  // play a 440Hz sound during 500ms on the shield buzzer
-  play(440, 500);
+  // toggle LED
+  digitalWrite(LED, !digitalRead(LED));
 }
 
 void setup()
 {
   // set up the button callback
-  buttonCallback(buttonCallback);
+  buttonCallback(button);
 }
 
 void loop()
 {
-
+  // this is free for your program
 }
