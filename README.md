@@ -66,12 +66,14 @@ The switches are located on pins 0 to 3, so when they are soldered the **pins ca
 
 The `DIP*` definitions help to find the right switch, they should be used instead of the pin numbers.
 
-| Switch | Definition  | Value (pin) |
-| ------ | ----------- | ----------- |
-| 1      | `DIP1`      | 0           |
-| 2      | `DIP2`      | 1           |
-| 3      | `DIP3`      | 3           |
-| 4      | `DIP4`      | 2           |
+| Switch | Definition      | Value (pin) |
+| ------ | --------------- | ----------- |
+| 1      | `DIP1`          | 0           |
+| 2      | `DIP2`          | 1           |
+| 3      | ~~`DIP3`~~      | 3           |
+| 4      | ~~`DIP4`~~      | 2           |
+
+**Note**: the 2nd version of the shield only has 2 switches instead of 4, so `DIP3` and `DIP4` can't to be used anymore. Instead these pins are dedicated for I2C communication. For legacy purposes these constants aren't removed.
 
 ### Button
 
