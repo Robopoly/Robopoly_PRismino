@@ -39,8 +39,8 @@ The H-bridge can deliver **2A per channel**, it is temperature regulated so if i
 
 `Stepper myStepper;`
 
-    // move 10 steps clockwise at a speed of 10Hz, the actual movement depends on step angle
-    myStepper.moveSteps(10, 10);
+    // move 100 steps clockwise at a speed of 50Hz, the actual movement depends on step angle
+    myStepper.moveSteps(100, 50);
 
 One bipolar stepper motor can be controlled via the `Stepper` class and the dual H-bridge on the shield. The same timer/counter than for the DC motors is used since DC motors cannot be used at the same time anyway.
 
