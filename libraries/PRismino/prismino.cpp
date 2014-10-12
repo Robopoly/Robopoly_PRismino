@@ -1,8 +1,8 @@
 /***************************************************************************************
  *
- * Title:       PRismino library v1.3
+ * Title:       PRismino library v1.4
  * File:        prismino.cpp
- * Date:        2014-04-23
+ * Date:        2014-10-12
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
@@ -12,6 +12,15 @@
 // ### PWM/MOTOR FUNCTIONS
 
 static volatile int8_t speedLeft, speedRight;
+
+// structure that holds data about stepper motor position and state
+struct stepperData
+{
+  int16_t position:     16;
+  int16_t final:        16;
+  uint8_t direction:     1;
+  volatile uint8_t busy: 1;
+} stepper;
 
 // sets pwm for h-bridge
 void setSpeed(int8_t _speedLeft, int8_t _speedRight)
@@ -133,6 +142,58 @@ ISR(TIMER4_COMPB_vect)
 
 ISR(TIMER4_OVF_vect)
 {
+  // stepper interrupt
+  if(stepper.busy)
+  {
+    // update current position
+    stepper.position += stepper.direction ? 1 : -1;
+
+    // switch to next state
+    switch(stepper.position & 0b11)
+    {
+      case 0:
+        PORTB &= ~(1 << 7);
+        PORTD |= (1 << 6);
+
+        PORTB |= (1 << 6);
+        PORTB |= (1 << 5);
+        break;
+      case 1:
+        PORTB |= (1 << 7);
+        PORTD |= (1 << 6);
+
+        PORTB &= ~(1 << 6);
+        PORTB |= (1 << 5);
+        break;
+      case 2:
+        PORTB |= (1 << 7);
+        PORTD &= ~(1 << 6);
+
+        PORTB |= (1 << 6);
+        PORTB |= (1 << 5);
+        break;
+      case 3:
+        PORTB |= (1 << 7);
+        PORTD |= (1 << 6);
+
+        PORTB |= (1 << 6);
+        PORTB &= ~(1 << 5);
+        break;
+    }
+
+    // goal position reached, disable the timer
+    if(stepper.position == stepper.final)
+    {
+      // stop the timer
+      TCCR4B = 0;
+      stepper.busy = 0;
+    }
+
+    // return from the interrupt as the DC motor control is not used
+    return;
+  }
+
+  // DC motor interrupts
   if(speedLeft > 0)
   {
     #ifdef SLOWDECAY
@@ -287,4 +348,81 @@ ISR(TIMER1_COMPC_vect)
 void unsetTimer(uint8_t id)
 {
   timedFunctionArray[id] = (timedFunction){NULL, 0, 0, 0};
+}
+
+// stepper motor methods
+Stepper::Stepper()
+{
+  // initialise stepper motor position variable
+  stepper.position = 0;
+}
+
+void Stepper::setPosition(int16_t _position)
+{
+  stepper.position = _position;
+}
+
+int16_t Stepper::getPosition()
+{
+  return stepper.position;
+}
+
+uint8_t Stepper::isBusy()
+{
+  return stepper.busy;
+}
+
+void Stepper::moveSteps(int16_t steps, uint16_t frequency)
+{
+  stepper.busy = 1;
+
+  // stop timer, set port operations to normal and waveform generation mode phase and frequency correct PWM mode
+  TCCR4A = 0;
+  TCCR4B = 0;
+  TCCR4C = 0;
+  // set phase and frequency correct PWM mode
+  TCCR4D = (1 << WGM40);
+  TCCR4E = 0;
+  
+  // reset timer
+  TC4H = 0;
+  TCNT4 = 0;
+  
+  // set h-bridge control ports to output
+  DDRB |= (1 << 7) | (1 << 6) | (1 << 5);
+  DDRD |= (1 << 6);
+  
+  // enable overflow interrupt vector
+  TIMSK4 = (1 << TOIE4);
+  // enable overflow interrupt
+  TIFR4 = (1 << TOV4);
+
+  // define final position to reach
+  stepper.final = stepper.position + steps;
+
+  // define rotating direction
+  stepper.direction = steps > 0 ? 1 : 0;
+
+  // select a prescaler, timer 4 prescalers are of power of 2 from 1 (1 << 0) to 16384 (1 << 14)
+  uint8_t i;
+  // timer/counter 4 is a 10-bit counter
+  uint16_t top;
+  for(i = 1; i < 14; i++)
+  {
+    // frequency = 16MHz / (2 * prescaler * top) => top = 16MHz / (2 * prescaler * frequency)
+    top = (F_CPU >> i) / frequency;
+    if(top < 1024)
+    {
+      break;
+    }
+  }
+  
+  // set counter top value
+  TC4H = top >> 8;
+  OCR4C = top & 0xff;
+  
+  // the 4 LSB define the prescaler, add 1 because 0 means the timer is off
+  TCCR4B = i + 1;
+  
+  asm("sei");
 }

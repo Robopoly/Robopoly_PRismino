@@ -1,8 +1,8 @@
 /***************************************************************************************
  *
- * Title:       PRismino library v1.3
+ * Title:       PRismino library v1.4
  * File:        prismino.h
- * Date:        2014-04-23
+ * Date:        2014-10-12
  * Author:      Karl Kangur
  * Website:     https://github.com/Robopoly/prismino-library
  *
@@ -48,6 +48,16 @@
 void setSpeed(int8_t, int8_t);
 
 void buttonCallback(void (*callback)(void) = NULL);
+
+class Stepper
+{
+public:
+	Stepper(void);
+	void setPosition(int16_t);
+	int16_t getPosition(void);
+	void moveSteps(int16_t, uint16_t);
+	uint8_t isBusy(void);
+};
 
 // number of available slots
 #define TIMEDFUNCTIONS 4

@@ -12,6 +12,8 @@ Installing the library is like with any [Arduino library](http://arduino.cc/en/G
 * Mac: `~/Documents/Arduino/`
 * Linux: `~/Documents/Arduino/`
 
+For example the `prismino.h` file of this library should be under `~/Documents/Arduino/libraries/PRismino/`. Once copied restart Arduino IDE.
+
 ## Motor functions
 
 ### Wheels/H-bridge
@@ -31,7 +33,34 @@ The H-bridge component is the [DRV8833](http://www.ti.com/product/drv8833) which
     #define SLOWDECAY
     #include <prismino.h>
 
-The H-bridge can deliver **2A per channel**, it is temperature regulated so if it overheats it will automatically stop and wait until the IC temperature gets low enough to restart.
+The H-bridge can deliver **2A per channel**, it is temperature regulated so if it overheats it will automatically stop and wait until the IC temperature gets low enough to restart. The absolute maximum voltage of the H-bridge is 11.8V, ideally do not exceed 10.8V as per the [datasheet](http://www.ti.com/product/drv8833).
+
+### Stepper motor
+
+`Stepper myStepper;`
+
+    // move 10 steps clockwise at a speed of 10Hz, the actual movement depends on step angle
+    myStepper.moveSteps(10, 10);
+
+One bipolar stepper motor can be controlled via the `Stepper` class and the dual H-bridge on the shield. The same timer/counter than for the DC motors is used since DC motors cannot be used at the same time anyway.
+
+The available methods of the `Stepper` class are:
+
+`void Stepper::setPosition(int16_t position);`
+
+Sets the reference position, can be used to "reset" the postion to `0`. One position equals to one commutation, the angle depends on the stepper motor step number.
+
+`int16_t Stepper::getPosition(void);`
+
+Returns the current stepper motor position.
+
+`void Stepper::moveSteps(int16_t steps, uint16_t frequancy);`
+
+Moves the stepper motor the amount of steps requested, the coil commutation happens at the requested frequency, the actual speed depends on the number of steps of the stepper motor. For example to get a rotational speed of 3RPM with a stepper having 400 steps one would need to set the commutation frequency to 3*400/60=20Hz. This is a non-blocking method.
+
+`uint8_t Stepper::isBusy(void);`
+
+Once `Stepper::moveSteps` is called the stepper motor will complete the requested number of steps at the requested speed, it's not a blocking method so other things can be done at the same time, to check if the motor has finished one can poll `Stepper::isBusy`.
 
 ## Button/switch functions
 
@@ -200,6 +229,10 @@ The potentiometer has a 10K resistor in line with the pin, this serves as a shor
 A few example programs are also provided to show how to use these functions and all the components on the Robopoly Shield. See them under _File -> Examples -> PRismino_ in Arduino IDE.
 
 # Version log
+
+## 1.4 (2014-10-12)
+
+* Added stepper motor class and methods.
 
 ## 1.3 (2014-04-23)
 

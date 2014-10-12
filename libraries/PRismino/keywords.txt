@@ -1,6 +1,6 @@
 #######################################
 # Syntax Coloring Map For PRismino
-# Only 1 tab between values any type!
+# Only 1 tab between values and type!
 #######################################
 
 #######################################
@@ -19,6 +19,12 @@ dipSwitch	KEYWORD2
 setTimer	KEYWORD2
 unsetTimer	KEYWORD2
 buttonCallback	KEYWORD2
+
+Stepper	KEYWORD2
+setPosition	KEYWORD2
+getPosition	KEYWORD2
+moveSteps	KEYWORD2
+isBusy	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
