@@ -37,28 +37,43 @@ The H-bridge can deliver **2A per channel**, it is temperature regulated so if i
 
 ### Stepper motor
 
-`Stepper myStepper;`
-
-    // move 100 steps clockwise at a speed of 50Hz, the actual movement depends on step angle
-    myStepper.moveSteps(100, 50);
-
 One bipolar stepper motor can be controlled via the `Stepper` class and the dual H-bridge on the shield. The same timer/counter than for the DC motors is used since DC motors cannot be used at the same time anyway.
 
 The available methods of the `Stepper` class are:
 
 `void Stepper::setPosition(int16_t position);`
 
+    // set reference position to 20, this does not actually move the stepper motor
+    Stepper myStepper;
+    myStepper.setPosition(100, 50);
+
 Sets the reference position, can be used to "reset" the postion to `0`. One position equals to one commutation, the angle depends on the stepper motor step number.
 
 `int16_t Stepper::getPosition(void);`
+
+    // get reference position
+    Stepper myStepper;
+    uint16_t stepperPosition = myStepper.getPosition();
 
 Returns the current stepper motor position.
 
 `void Stepper::moveSteps(int16_t steps, uint16_t frequancy);`
 
+    // move 100 steps clockwise at a speed of 50Hz, the actual movement depends on step angle
+    Stepper myStepper;
+    myStepper.moveSteps(100, 50);
+
 Moves the stepper motor the amount of steps requested, the coil commutation happens at the requested frequency, the actual speed depends on the number of steps of the stepper motor. For example to get a rotational speed of 3RPM with a stepper having 400 steps one would need to set the commutation frequency to 3*400/60=20Hz. This is a non-blocking method.
 
 `uint8_t Stepper::isBusy(void);`
+
+    Stepper myStepper;
+    myStepper.moveSteps(100, 50);
+    // while the stepper is completing its task one can do other things
+    while(myStepper.isBusy())
+    {
+        // do other stuff
+    }
 
 Once `Stepper::moveSteps` is called the stepper motor will complete the requested number of steps at the requested speed, it's not a blocking method so other things can be done at the same time, to check if the motor has finished one can poll `Stepper::isBusy`.
 
