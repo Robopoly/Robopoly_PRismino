@@ -245,6 +245,10 @@ A few example programs are also provided to show how to use these functions and 
 
 # Version log
 
+## 1.5 (2015-04-05)
+
+* Formatted as an Arduino Library v1.5
+
 ## 1.4 (2014-10-12)
 
 * Added stepper motor class and methods.
