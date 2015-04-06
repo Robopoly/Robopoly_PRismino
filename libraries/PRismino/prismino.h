@@ -1,10 +1,10 @@
 /***************************************************************************************
  *
- * Title:       PRismino library v1.5
+ * Title:       PRismino library v1.4
  * File:        prismino.h
- * Date:        2015-04-05
- * Author:      Karl Kangur, David Perrenoud
- * Website:     https://github.com/Robopoly/Robopoly_PRismino
+ * Date:        2014-10-12
+ * Author:      Karl Kangur
+ * Website:     https://github.com/Robopoly/prismino-library
  *
  ***************************************************************************************/
 #include <Arduino.h>

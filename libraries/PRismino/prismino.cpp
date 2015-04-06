@@ -1,3 +1,12 @@
+/***************************************************************************************
+ *
+ * Title:       PRismino library v1.4
+ * File:        prismino.cpp
+ * Date:        2014-10-12
+ * Author:      Karl Kangur
+ * Website:     https://github.com/Robopoly/prismino-library
+ *
+ ***************************************************************************************/
 #include <prismino.h>
 
 // ### PWM/MOTOR FUNCTIONS

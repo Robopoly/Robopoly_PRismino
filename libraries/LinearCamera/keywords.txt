@@ -1,0 +1,27 @@
+#######################################
+# Syntax Coloring Map For LinearCamera
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+LinearCamera	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+getPixels	KEYWORD2
+getPeak	KEYWORD2
+getAverage	KEYWORD2
+getMin	KEYWORD2
+getMax	KEYWORD2
+setSpeed	KEYWORD2
+setExpTime	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+PIXELS	LITERAL1
