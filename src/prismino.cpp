@@ -4,6 +4,8 @@
 
 static volatile int8_t speedLeft, speedRight;
 
+static volatile int speed_1, speed_2;
+
 // structure that holds data about stepper motor position and state
 struct stepperData
 {
@@ -13,210 +15,94 @@ struct stepperData
   volatile uint8_t busy: 1;
 } stepper;
 
-// sets pwm for h-bridge
-void setSpeed(int8_t _speedLeft, int8_t _speedRight)
+void setupSetSpeed(void)
 {
-  // h-bridge uses timer/counter 4 (10-bit), channels A and B
-  // stop timer, set port operations to normal and waveform generation mode to Fast PWM
-  TCCR4A = 0;
-  TCCR4B = 0;
-  TCCR4C = 0;
-  // set fast PWM mode
-  TCCR4D = 0;
-  TCCR4E = 0;
+  // Set outuput compare registers to 0
+  OCR1A = 0;
+  OCR1B = 0;
+  OCR1C = 0;
   
-  // do not allow higher or lower values than 100 or -100
-  if(_speedLeft < 0)
-  {
-    speedLeft = _speedLeft < -100 ? -100 : _speedLeft;
-  }
-  else
-  {
-    speedLeft = _speedLeft > 100 ? 100 : _speedLeft;
-  }
+  // Fast-PWM 10-bit => TOP = 0x3FF => WGM13:0 = 7
+  TCCR1A |= (1 << WGM11) | (1 << WGM10);
+  TCCR1B |= (1 << WGM12);
+  TCCR1B &= ~(1 << WGM13);
   
-  if(_speedRight < 0)
-  {
-    speedRight = _speedRight < -100 ? -100 : _speedRight;
-  }
-  else
-  {
-    speedRight = _speedRight > 100 ? 100 : _speedRight;
-  }
+  // Inverted mode
+  TCCR1A |= (1 << COM1A1) | (1 << COM1C1);
+  TCCR1A &= ~(1 << COM1A0) & ~(1 << COM1C0);
   
-  // set compare interrupt 
-  uint16_t temp;
+  // Set prescaler to 1
+  TCCR1B &= ~(1 << CS12) & ~(1 << CS11);
+  TCCR1B |= (1 << CS10);
   
-  // timer 4 uses a shared temporary register, write to it and then to the 8-bit register to save the 10-bit value
-  temp = (long) 1023 * (speedLeft > 0 ? speedLeft : -speedLeft) / 100;
+  // Disable output compare interrupts
+  TIMSK1 &= ~(1 << ICIE1) & ~(1 << OCIE1C) & ~(1 << OCIE1B) & ~(1 << OCIE1A);
   
-  TC4H = temp >> 8;
-  OCR4A = temp & 0xff;
+  // Set H-bridge pins to LOW
+  PORTB &= ~(1 << 7) & ~(1 << 6) & ~(1 << 5);
+  PORTD &= ~(1 << 6);
   
-  temp = (long) 1023 * (speedRight > 0 ? speedRight : -speedRight) / 100;
-  
-  TC4H = temp >> 8;
-  OCR4B = temp & 0xff;
-  
-  // reset timer
-  TC4H = 0;
-  TCNT4 = 0;
-  
-  // set counter top value (0x3ff = 1023) which gives 16MHz/1024 = 15.625kHz
-  TC4H = 3;
-  OCR4C = 0xff;
-  
-  // set h-bridge control ports to output
+  // Set H-bridge pins to OUTPUT
   DDRB |= (1 << 7) | (1 << 6) | (1 << 5);
   DDRD |= (1 << 6);
-  
-  #ifdef SLOWDECAY
-  // set all values to 1 for slow decay mode (shorts the motor winding)
-  PORTB &= ~((1 << 7) | (1 << 6) | (1 << 5));
-  PORTD &= ~(1 << 6);
-  #else
-  // set all values to 0 for fast decay mode (return current goes back to source)
-  PORTB |= (1 << 7) | (1 << 6) | (1 << 5);
-  PORTD |= (1 << 6);
-  #endif
-  
-  // enable interrupt vectors
-  TIMSK4 = (1 << OCIE4A) | (1 << OCIE4B) | (1 << TOIE4);
-  // enable overflow and compare interrupts for A and B channels
-  TIFR4 = (1 << OCF4A) | (1 << OCF4B) | (1 << TOV4);
-  
-  // set prescaler to 1 (enable timer)
-  TCCR4B = (1 << CS40);
-  
-  asm("sei");
 }
 
-ISR(TIMER4_COMPA_vect)
+// sets pwm for h-bridge
+void setSpeed(int input_speed_1, int input_speed_2)
 {
-  if(speedLeft > 0)
+  // Prevent values from being out of the range [-100;100]
+  if(input_speed_1 > 0)
   {
-    #ifdef SLOWDECAY
-    PORTD &= ~(1 << 6);
-    #else
-    PORTB |= (1 << 7);
-    #endif
+    speed_1 = input_speed_1 > 100 ? 100 : input_speed_1;
+    // Mapping from 4 to 53 for fastdecay mode
+    speed_1 = ( (100 - 53)*(speed_1 - 4) )/(100-4) + 53;
+    speed_1 = speed_1 < 0 ? 0 : speed_1;
   }
-  else if(speedLeft < 0)
+  else
+    speed_1 = input_speed_1 < -100 ? -100 : input_speed_1;
+    
+  if(input_speed_2 > 0)
   {
-    #ifdef SLOWDECAY
-    PORTB &= ~(1 << 7);
-    #else
-    PORTD |= (1 << 6);
-    #endif
+    speed_2 = input_speed_2 > 100 ? 100 : input_speed_2;
+    // Mapping from 4 to 53 for fastdecay mode
+    speed_2 = ( (100 - 53)*(speed_2 - 4) )/(100-4) + 53;
+    speed_2 = speed_2 < 0 ? 0 : speed_2;
   }
-}
-
-ISR(TIMER4_COMPB_vect)
-{
-  if(speedRight > 0)
+  else
+    speed_2 = input_speed_2 < -100 ? -100 : input_speed_2;
+  
+  // Set Output Compare Register for Motor 1 with OCR1C and PIN 12 (PD6)
+  if(speed_1 > 0)
   {
-    #ifdef SLOWDECAY
-    PORTB &= ~(1 << 6);
-    #else
-    PORTB |= (1 << 5);
-    #endif
+    OCR1C = ( (int) ( ((double)speed_1*1023)/100) ) ;
+    PORTD &= ~(1 << 6);  // set PIN 12 on LOW
   }
-  else if(speedRight < 0)
+  else if(speed_1 < 0)
   {
-    #ifdef SLOWDECAY
-    PORTB &= ~(1 << 5);
-    #else
-    PORTB |= (1 << 6);
-    #endif
+    OCR1C = 1023 + ((int) ( ((double) speed_1*1023)/100 ) );
+    PORTD |= (1 << 6);  // set PIN 12 on HIGH
   }
-}
-
-ISR(TIMER4_OVF_vect)
-{
-  // stepper interrupt
-  if(stepper.busy)
+  else
   {
-    // update current position
-    stepper.position += stepper.direction ? 1 : -1;
-
-    // switch to next state
-    switch(stepper.position & 0b11)
-    {
-      case 0:
-        PORTB &= ~(1 << 7);
-        PORTD |= (1 << 6);
-
-        PORTB |= (1 << 6);
-        PORTB |= (1 << 5);
-        break;
-      case 1:
-        PORTB |= (1 << 7);
-        PORTD |= (1 << 6);
-
-        PORTB &= ~(1 << 6);
-        PORTB |= (1 << 5);
-        break;
-      case 2:
-        PORTB |= (1 << 7);
-        PORTD &= ~(1 << 6);
-
-        PORTB |= (1 << 6);
-        PORTB |= (1 << 5);
-        break;
-      case 3:
-        PORTB |= (1 << 7);
-        PORTD |= (1 << 6);
-
-        PORTB |= (1 << 6);
-        PORTB &= ~(1 << 5);
-        break;
-    }
-
-    // goal position reached, disable the timer
-    if(stepper.position == stepper.final)
-    {
-      // stop the timer
-      TCCR4B = 0;
-      stepper.busy = 0;
-    }
-
-    // return from the interrupt as the DC motor control is not used
-    return;
-  }
-
-  // DC motor interrupts
-  if(speedLeft > 0)
-  {
-    #ifdef SLOWDECAY
-    PORTD |= (1 << 6);
-    #else
-    PORTB &= ~(1 << 7);
-    #endif
-  }
-  else if(speedLeft < 0)
-  {
-    #ifdef SLOWDECAY
-    PORTB |= (1 << 7);
-    #else
-    PORTD &= ~(1 << 6);
-    #endif
+    OCR1C = 0;
+    PORTD &= ~(1 << 6);  // set PIN 12 on LOW
   }
   
-  if(speedRight > 0)
+  // Set Output Compare Register for Motor 2 with OCR1A and PIN 10 (PB6)
+  if(speed_2 > 0)
   {
-    #ifdef SLOWDECAY
-    PORTB |= (1 << 6);
-    #else
-    PORTB &= ~(1 << 5);
-    #endif
+    OCR1A = ( (int) ( ((double)speed_2*1023)/100) ) ;
+    PORTB &= ~(1 << 6);  // set PIN 10 on LOW
   }
-  else if(speedRight < 0)
+  else if(speed_2 < 0)
   {
-    #ifdef SLOWDECAY
-    PORTB |= (1 << 5);
-    #else
-    PORTB &= ~(1 << 6);
-    #endif
+    OCR1A = 1023 + ((int) ( ((double) speed_2*1023)/100 ) );
+    PORTB |= (1 << 6);  // set PIN 10 on HIGH
+  }
+  else
+  {
+    OCR1A = 0;
+    PORTB &= ~(1 << 6);  // set PIN 10 on LOW
   }
 }
 

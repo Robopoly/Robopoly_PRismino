@@ -45,7 +45,9 @@
 // macro for shortcut and backwards compatibility
 #define play(frequency, duration) tone(BZR, frequency, duration)
 
-void setSpeed(int8_t, int8_t);
+void setupSetSpeed(void);
+
+void setSpeed(int input_speed_1, int input_speed_2);
 
 void buttonCallback(void (*callback)(void) = NULL);
 
