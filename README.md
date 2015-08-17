@@ -245,6 +245,10 @@ A few example programs are also provided to show how to use these functions and 
 
 # Version log
 
+## 1.6 (2015-08-17)
+
+* Replace software PWM by hardware PWM. A modified Servo library (ServoRobopoly) was added because TIMER1 was already used for this harware PWM.
+
 ## 1.5 (2015-04-05)
 
 * Formatted as an Arduino Library v1.5
