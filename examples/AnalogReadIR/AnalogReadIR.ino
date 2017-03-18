@@ -1,10 +1,15 @@
 /***************************************************************************************
  *
  * Title:       Analog read IR
- * Description: Read the infra-red sensor from an analog input port.
+ * Description: Read an infrared sensor from an analog input port.
+ * If the analog value read is < 512, we turn the LED on, else it's turned off.
+ * Connect the sensor output to A1.
+ * Connect the sensor power rack ENABLE to 4.
  *
  ***************************************************************************************/
 #include <prismino.h>
+
+#define IR_EN 4
 
 // the analog value is between 0 and 1023 so it needs a 16-bit variable
 // can use "unsigned int" or "uint16_t" for short
@@ -14,11 +19,14 @@ void setup()
 {
   // set pin output mode (sources current)
   pinMode(LED, OUTPUT);
+  pinMode(IR_EN, OUTPUT);
 }
 
 void loop()
 {
-  // connect sensor to pin A1, A0 is used by the potentiometer on the shield
+  // turn on the emitter and read the IR sensor
+  digitalWrite(IR_EN, HIGH); 
+  delayMicroseconds(100);
   ir_value = analogRead(A1);
   
   if(ir_value < 512)
