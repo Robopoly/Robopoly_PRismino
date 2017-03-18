@@ -28,6 +28,8 @@ void loop()
   digitalWrite(IR_EN, HIGH); 
   delayMicroseconds(100);
   ir_value = analogRead(A1);
+  digitalWrite(IR_EN, LOW); // turn off IR, no need to keep it on all the time
+
   
   if(ir_value < 512)
   {
